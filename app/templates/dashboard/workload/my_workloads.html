@@ -1,6 +1,8 @@
-{% extends "base.html" %}
+{% extends "dashboard_base.html" %}
 
 {% block title %}Мои расчеты нагрузки{% endblock %}
+
+{% block section_title %}Мои расчеты нагрузки{% endblock %}
 
 {% block head %}
 <style>
@@ -105,129 +107,70 @@
 </style>
 {% endblock %}
 
-{% block content %}
-<div class="container is-fluid p-0">
-    <!-- Навигационная панель -->
-    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <!-- Бургер-меню -->
-            <a role="button" class="navbar-item burger-menu-toggle ml-2" id="burger-menu-button">
-                <span class="icon">
-                    <i class="fas fa-bars"></i>
-                </span>
-            </a>
-            
-            <!-- Название раздела -->
-            <div class="navbar-item">
-                <h1 class="title is-5" id="section-title">Мои расчеты нагрузки</h1>
-            </div>
-        </div>
-
-        <div class="navbar-end">
-            <div class="navbar-item">
-                {{ user.full_name }}
-            </div>
-            <div class="navbar-item">
-                <a href="{{ url_for('auth.logout') }}" class="button is-light" title="Выйти">
-                    <span class="icon">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </span>
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Основной контент с боковым меню -->
-    <div class="columns is-gapless" style="min-height: calc(100vh - 52px);">
-        <!-- Боковое меню (изначально скрыто) -->
-        <div class="column is-2 sidebar has-background-light" id="sidebar-menu" style="display: none;">
-            <aside class="menu p-4">
-                <p class="menu-label">Навигация</p>
-                <ul class="menu-list">
-                    <li><a href="{{ url_for('main.index') }}" data-section="Расчет нагрузки">Расчет нагрузки</a></li>
-                    <li><a href="#" id="instruction-link" data-section="Инструкция">Инструкция</a></li>
-                    <li><a href="#" id="telegram-link" data-section="Телеграм чат" target="_blank">Телеграм чат</a></li>
-                    <li><a class="is-active" href="{{ url_for('workload.my_workloads') }}" data-section="Мои расчеты">Мои расчеты</a></li>
-                    {% if user.is_admin %}
-                    <li><a href="{{ url_for('settings.index') }}" data-section="Настройки">Настройки</a></li>
-                    {% endif %}
-                </ul>
-            </aside>
-        </div>
-        
-        <!-- Основное содержимое -->
-        <div class="column content-area" id="main-content">
-            <div class="section">
-                <div class="container is-fluid">
-                    
-                    <!-- Заголовок страницы -->
-                    <div class="level mb-5">
-                        <div class="level-left">
-                            <h2 class="title is-4">Сохраненные расчеты нагрузки</h2>
-                        </div>
-                        <div class="level-right">
-                            <a href="{{ url_for('main.index') }}" class="button is-primary">
-                                <span class="icon">
-                                    <i class="fas fa-plus"></i>
-                                </span>
-                                <span>Новый расчет</span>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Список расчетов -->
-                    {% if workloads %}
-                    <div class="columns is-multiline">
-                        {% for workload in workloads %}
-                        <div class="column is-4">
-                            <div class="card workload-card">
-                                <div class="card-content">
-                                    <h3 class="title is-5 workload-title">{{ workload.title }}</h3>
-                                    <p class="workload-specialty">{{ workload.specialty }}</p>
-                                    <div class="workload-details mt-3">
-                                        <p><strong>Год реализации:</strong> {{ workload.academic_year }}</p>
-                                        <p><strong>Год набора:</strong> {{ workload.admission_year }}</p>
-                                        <p><strong>Общая нагрузка:</strong> {{ workload.total_workload }} ч.</p>
-                                        <p><strong>Дата создания:</strong> {{ workload.date_created }}</p>
-                                    </div>
-                                </div>
-                                <footer class="card-footer">
-                                    <a href="{{ url_for('workload.view_workload', workload_id=workload.id) }}" class="card-footer-item has-text-info">
-                                        <span class="icon mr-1">
-                                            <i class="fas fa-eye"></i>
-                                        </span>
-                                        Просмотр
-                                    </a>
-                                    <a href="#" class="card-footer-item has-text-danger" 
-                                       onclick="confirmDelete({{ workload.id }}, '{{ workload.title }}')">
-                                        <span class="icon mr-1">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
-                                        Удалить
-                                    </a>
-                                </footer>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <!-- Сообщение, если нет расчетов -->
-                    <div class="no-workloads-message">
-                        <h3 class="title is-4">У вас пока нет сохраненных расчетов</h3>
-                        <p class="mb-4">Для создания расчета нагрузки перейдите на страницу расчета</p>
-                        <a href="{{ url_for('main.index') }}" class="button is-primary">
-                            <span class="icon">
-                                <i class="fas fa-calculator"></i>
-                            </span>
-                            <span>Создать расчет</span>
-                        </a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+{% block dashboard_content %}
+<!-- Заголовок страницы -->
+<div class="level mb-5">
+    <div class="level-left">
+        <h2 class="title is-4">Сохраненные расчеты нагрузки</h2>
+    </div>
+    <div class="level-right">
+        <a href="{{ url_for('main.index') }}" class="button is-primary">
+            <span class="icon">
+                <i class="fas fa-plus"></i>
+            </span>
+            <span>Новый расчет</span>
+        </a>
     </div>
 </div>
+
+<!-- Список расчетов -->
+{% if workloads %}
+<div class="columns is-multiline">
+    {% for workload in workloads %}
+    <div class="column is-4">
+        <div class="card workload-card">
+            <div class="card-content">
+                <h3 class="title is-5 workload-title">{{ workload.title }}</h3>
+                <p class="workload-specialty">{{ workload.specialty }}</p>
+                <div class="workload-details mt-3">
+                    <p><strong>Год реализации:</strong> {{ workload.academic_year }}</p>
+                    <p><strong>Год набора:</strong> {{ workload.admission_year }}</p>
+                    <p><strong>Общая нагрузка:</strong> {{ workload.total_workload }} ч.</p>
+                    <p><strong>Дата создания:</strong> {{ workload.date_created }}</p>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="{{ url_for('workload.view_workload', workload_id=workload.id) }}" class="card-footer-item has-text-info">
+                    <span class="icon mr-1">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                    Просмотр
+                </a>
+                <a href="#" class="card-footer-item has-text-danger" 
+                   onclick="confirmDelete({{ workload.id }}, '{{ workload.title }}')">
+                    <span class="icon mr-1">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    Удалить
+                </a>
+            </footer>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Сообщение, если нет расчетов -->
+<div class="no-workloads-message">
+    <h3 class="title is-4">У вас пока нет сохраненных расчетов</h3>
+    <p class="mb-4">Для создания расчета нагрузки перейдите на страницу расчета</p>
+    <a href="{{ url_for('main.index') }}" class="button is-primary">
+        <span class="icon">
+            <i class="fas fa-calculator"></i>
+        </span>
+        <span>Создать расчет</span>
+    </a>
+</div>
+{% endif %}
 
 <!-- Модальное окно подтверждения удаления -->
 <div id="delete-confirm-modal-backdrop" class="delete-confirm-modal-backdrop">
@@ -247,69 +190,6 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Обработчик для бургер-меню
-        const burgerButton = document.getElementById('burger-menu-button');
-        const sidebar = document.getElementById('sidebar-menu');
-        const mainContent = document.getElementById('main-content');
-        
-        burgerButton.addEventListener('click', () => {
-            if (sidebar.style.display === 'none' || sidebar.style.width === '0px') {
-                // Плавное открытие
-                sidebar.style.display = 'block';
-                sidebar.style.width = '0px';
-                setTimeout(() => {
-                    sidebar.style.width = '250px';
-                }, 10);
-                
-                mainContent.classList.remove('is-12');
-                mainContent.classList.add('is-10');
-                burgerButton.classList.add('is-active');
-            } else {
-                // Плавное закрытие
-                sidebar.style.width = '0px';
-                setTimeout(() => {
-                    sidebar.style.display = 'none';
-                }, 300); // Должно совпадать с transition в CSS
-                
-                mainContent.classList.remove('is-10');
-                mainContent.classList.add('is-12');
-                burgerButton.classList.remove('is-active');
-            }
-        });
-        
-        // Загрузка ссылок из настроек
-        function loadSettings() {
-            fetch('/settings/api/settings')
-                .then(response => {
-                    if (!response.ok) {
-                        return {}; // Возвращаем пустой объект в случае ошибки
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Loaded settings for menu:', data);
-                    
-                    // Обновляем ссылки в меню
-                    const instructionLink = document.getElementById('instruction-link');
-                    const telegramLink = document.getElementById('telegram-link');
-                    
-                    if (data.ИнструкцияСсылка) {
-                        instructionLink.href = data.ИнструкцияСсылка;
-                        instructionLink.setAttribute('target', '_blank');
-                    }
-                    
-                    if (data.ТелеграмСсылка) {
-                        telegramLink.href = data.ТелеграмСсылка;
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки настроек для меню:', error);
-                });
-        }
-        
-        // Загружаем настройки при загрузке страницы
-        loadSettings();
-        
         // Обработчики для модального окна подтверждения удаления
         const deleteModalBackdrop = document.getElementById('delete-confirm-modal-backdrop');
         const cancelDeleteButton = document.getElementById('cancel-delete');

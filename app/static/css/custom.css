@@ -1,4 +1,144 @@
-/* Стили для страницы авторизации */
+/* Улучшенные стили для тултипов */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 5px;
+  cursor: help;
+}
+
+.tooltip-icon {
+  background-color: #f14668;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+/* Меняем цвет иконки в зависимости от состояния */
+.has-text-success .tooltip-icon {
+  background-color: #48c774; /* Зеленый для успешного состояния */
+}
+
+.has-text-danger .tooltip-icon {
+  background-color: #f14668; /* Красный для ошибок */
+}
+
+.tooltip-content {
+  display: none;
+  width: 280px;
+  background-color: #363636;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px 15px;
+  position: absolute;
+  z-index: 2000; /* Увеличенный z-index для видимости поверх карточек */
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  pointer-events: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  overflow: visible;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Тень для лучшей видимости */
+}
+
+/* Позиционирование тултипа */
+.tooltip-content {
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #363636 transparent transparent transparent;
+}
+
+/* Особые стили для тултипов в заголовках таблицы */
+th .tooltip-container .tooltip-content {
+  bottom: auto;
+  top: 125%;
+  left: 0;
+  margin-left: 0;
+  transform: translateX(0);
+}
+
+th .tooltip-container .tooltip-content::after {
+  top: auto;
+  bottom: 100%;
+  left: 10%;
+  border-color: transparent transparent #363636 transparent;
+}
+
+/* Для тултипов в правой части таблицы */
+th:nth-child(n+7) .tooltip-container .tooltip-content {
+  left: auto;
+  right: 0;
+}
+
+th:nth-child(n+7) .tooltip-container .tooltip-content::after {
+  left: auto;
+  right: 10%;
+}
+
+/* Для тултипов в карточках в правых колонках */
+.column:nth-last-child(-n+2) .tooltip-content {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+.column:nth-last-child(-n+2) .tooltip-content::after {
+  left: auto;
+  right: 20px;
+  margin-left: 0;
+  margin-right: -5px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: block;
+  opacity: 1;
+}
+
+/* Обеспечиваем видимость тултипов в карточках */
+.card {
+  overflow: visible !important;
+}
+
+.card-content {
+  overflow: visible !important;
+}
+
+/* Стили для успешных состояний */
+.has-text-success {
+  color: #48c774 !important;
+}
+
+.has-text-danger {
+  color: #f14668 !important;
+}
+
+/* Дополнительные стили для анимации при изменении цвета */
+.title.is-3 {
+  transition: color 0.3s ease;
+}
+
+.tooltip-icon {
+  transition: background-color 0.3s ease;
+}/* Стили для страницы авторизации */
 .shadow {
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
 }
@@ -196,7 +336,7 @@
   }
 }
 
-/* Стили для тултипов */
+/* Улучшенные стили для тултипов */
 .tooltip-container {
   position: relative;
   display: inline-block;
@@ -225,19 +365,24 @@
   border-radius: 6px;
   padding: 10px 15px;
   position: absolute;
-  z-index: 1000;
+  z-index: 2000; /* Увеличенный z-index для видимости поверх карточек */
   opacity: 0;
   transition: opacity 0.3s;
   font-size: 0.95rem;
   line-height: 1.5;
   pointer-events: none;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -140px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
-  overflow: hidden;
+  overflow: visible;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Тень для лучшей видимости */
+}
+
+/* Позиционирование тултипа */
+.tooltip-content {
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .tooltip-content::after {
@@ -257,6 +402,7 @@ th .tooltip-container .tooltip-content {
   top: 125%;
   left: 0;
   margin-left: 0;
+  transform: translateX(0);
 }
 
 th .tooltip-container .tooltip-content::after {
@@ -277,7 +423,30 @@ th:nth-child(n+7) .tooltip-container .tooltip-content::after {
   right: 10%;
 }
 
+/* Для тултипов в карточках в правых колонках */
+.column:nth-last-child(-n+2) .tooltip-content {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+.column:nth-last-child(-n+2) .tooltip-content::after {
+  left: auto;
+  right: 20px;
+  margin-left: 0;
+  margin-right: -5px;
+}
+
 .tooltip-container:hover .tooltip-content {
   display: block;
   opacity: 1;
+}
+
+/* Обеспечиваем видимость тултипов в карточках */
+.card {
+  overflow: visible !important;
+}
+
+.card-content {
+  overflow: visible !important;
 }

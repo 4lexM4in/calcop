@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container is-fluid p-0">
+    <!-- Навигационная панель -->
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <!-- Бургер-меню -->
+            <a role="button" class="navbar-item burger-menu-toggle ml-2" id="burger-menu-button">
+                <span class="icon">
+                    <i class="fas fa-bars"></i>
+                </span>
+            </a>
+            
+            <!-- Название раздела -->
+            <div class="navbar-item">
+                <h1 class="title is-5" id="section-title">{% block section_title %}{% endblock %}</h1>
+            </div>
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                {% block user_name %}{{ user.full_name }}{% endblock %}
+            </div>
+            <div class="navbar-item">
+                <a href="{{ url_for('auth.logout') }}" class="button is-light" title="Выйти">
+                    <span class="icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент с боковым меню -->
+    <div class="columns is-gapless" style="min-height: calc(100vh - 52px);">
+
+        <!-- Боковое меню (изначально скрыто) -->
+        <div class="column is-2 sidebar has-background-light" id="sidebar-menu" style="display: none;">
+            <aside class="menu p-4">
+                <p class="menu-label">Навигация</p>
+                <ul class="menu-list">
+                    {% block menu_items %}
+                    <li><a href="{{ url_for('main.index') }}" data-section="Расчет нагрузки" 
+                           class="{% if request.endpoint == 'main.index' %}is-active{% endif %}">Расчет нагрузки</a></li>
+                    <li><a href="#" id="instruction-link" data-section="Инструкция">Инструкция</a></li>
+                    <li><a href="#" id="telegram-link" data-section="Телеграм чат" target="_blank">Телеграм чат</a></li>
+                    <li><a href="{{ url_for('workload.my_workloads') }}" data-section="Мои расчеты"
+                           class="{% if request.endpoint in ['workload.my_workloads', 'workload.view_workload'] %}is-active{% endif %}">Мои расчеты</a></li>
+                    {% if user.is_admin %}
+                    <li><a href="{{ url_for('settings.index') }}" data-section="Настройки"
+                           class="{% if request.endpoint == 'settings.index' %}is-active{% endif %}">Настройки</a></li>
+                    {% endif %}
+                    {% endblock %}
+                </ul>
+            </aside>
+        </div>
+        
+        <!-- Основное содержимое -->
+        <div class="column content-area" id="main-content">
+            <div class="section">
+                <div class="container is-fluid">
+                    {% block dashboard_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Общие скрипты для всех dashboard страниц -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Загрузка ссылок из настроек
+        function loadSettings() {
+            fetch('/settings/api/settings')
+                .then(response => {
+                    if (!response.ok) {
+                        return {}; // Возвращаем пустой объект в случае ошибки
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Loaded settings for menu:', data);
+                    
+                    // Обновляем ссылки в меню
+                    const instructionLink = document.getElementById('instruction-link');
+                    const telegramLink = document.getElementById('telegram-link');
+                    
+                    if (data.ИнструкцияСсылка) {
+                        instructionLink.href = data.ИнструкцияСсылка;
+                        instructionLink.setAttribute('target', '_blank');
+                    }
+                    
+                    if (data.ТелеграмСсылка) {
+                        telegramLink.href = data.ТелеграмСсылка;
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки настроек для меню:', error);
+                });
+        }
+        
+        // Загружаем настройки при загрузке страницы
+        loadSettings();
+
+        // Обработчик для бургер-меню
+        const burgerButton = document.getElementById('burger-menu-button');
+        const sidebar = document.getElementById('sidebar-menu');
+        const mainContent = document.getElementById('main-content');
+        
+        burgerButton.addEventListener('click', () => {
+            if (sidebar.style.display === 'none' || sidebar.style.width === '0px') {
+                // Плавное открытие
+                sidebar.style.display = 'block';
+                sidebar.style.width = '0px';
+                setTimeout(() => {
+                    sidebar.style.width = '250px';
+                }, 10);
+                
+                mainContent.classList.remove('is-12');
+                mainContent.classList.add('is-10');
+                burgerButton.classList.add('is-active');
+            } else {
+                // Плавное закрытие
+                sidebar.style.width = '0px';
+                setTimeout(() => {
+                    sidebar.style.display = 'none';
+                }, 300); // Должно совпадать с transition в CSS
+                
+                mainContent.classList.remove('is-10');
+                mainContent.classList.add('is-12');
+                burgerButton.classList.remove('is-active');
+            }
+        });
+        
+        // Обновление заголовка секции при клике на пункт меню
+        const menuItems = document.querySelectorAll('.menu-list a');
+        const sectionTitle = document.getElementById('section-title');
+        
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                menuItems.forEach(i => i.classList.remove('is-active'));
+                this.classList.add('is-active');
+                
+                // Обновляем заголовок секции
+                if (this.hasAttribute('data-section')) {
+                    sectionTitle.textContent = this.getAttribute('data-section');
+                }
+                
+                // Если это не переход на другую страницу, то отменяем стандартное поведение
+                if (!this.hasAttribute('href') || this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                
+                // На мобильных устройствах автоматически скрываем меню после выбора
+                if (window.innerWidth < 769) {
+                    sidebar.style.display = 'none';
+                    burgerButton.classList.remove('is-active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -29,7 +29,10 @@
         {% endwith %}
     </div>
 
-    {% block content %}{% endblock %}
+    {% block body %}
+        <!-- Default body content for pages without navigation -->
+        {% block content %}{% endblock %}
+    {% endblock %}
     
     <!-- Скрипты -->
     <script>

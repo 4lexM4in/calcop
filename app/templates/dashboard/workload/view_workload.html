@@ -56,7 +56,7 @@
     .card {
         height: 100%;
         border-radius: 6px;
-        overflow: hidden;
+        overflow: visible;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
@@ -76,11 +76,16 @@
     
     .card .title {
         margin-bottom: 0.25rem;
+        transition: color 0.3s ease;
     }
     
     .card .subtitle {
         opacity: 0.8;
         margin-top: 0.5rem !important;
+    }
+    
+    .card-content {
+        overflow: visible;
     }
     
     /* Стили для тултипов */
@@ -103,6 +108,16 @@
         justify-content: center;
         font-size: 0.8rem;
         vertical-align: text-top;
+        transition: background-color 0.3s ease;
+    }
+    
+    /* Зеленый цвет для успешного состояния */
+    .has-text-success .tooltip-icon {
+        background-color: #48c774;
+    }
+    
+    .has-text-danger .tooltip-icon {
+        background-color: #f14668;
     }
     
     .tooltip-content {
@@ -114,7 +129,7 @@
         border-radius: 6px;
         padding: 10px 15px;
         position: absolute;
-        z-index: 2000; /* Увеличиваем z-index */
+        z-index: 2000;
         opacity: 0;
         transition: opacity 0.3s;
         font-size: 0.95rem;
@@ -123,8 +138,8 @@
         word-wrap: break-word;
         overflow-wrap: break-word;
         white-space: normal;
-        overflow: visible; /* Изменяем на visible */
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Добавляем тень для лучшей видимости */
+        overflow: visible;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     
     /* Позиционируем тултип над элементом */
@@ -164,7 +179,7 @@
     .column:last-child .tooltip-content {
         left: auto;
         right: 0;
-        transform: translateX(10px); /* Немного сдвигаем влево */
+        transform: translateX(10px);
     }
     
     .tooltip-container:hover .tooltip-content {
@@ -172,16 +187,13 @@
         opacity: 1;
     }
     
-    /* Стили для карточек - добавляем overflow visible */
-    .card {
-        height: 100%;
-        border-radius: 6px;
-        overflow: visible; /* Изменяем на visible */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Контейнер для карточек - обеспечиваем видимость тултипов */
+    .columns.is-multiline {
+        overflow: visible;
     }
     
-    .card-content {
-        overflow: visible; /* Добавляем для content */
+    .columns.is-multiline .column {
+        overflow: visible;
     }
     
     /* Стили для таблицы */
@@ -284,6 +296,92 @@
         height: 1.2rem;
     }
     
+    /* Стили для индикации изменений */
+    .has-changes {
+        border-color: #ff9800 !important;
+        box-shadow: 0 0 0 0.125em rgba(255, 152, 0, 0.25) !important;
+        background-color: #fff8f0 !important;
+    }
+
+    /* Стили для заблокированной кнопки */
+    .button.is-static {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Анимация для кнопки пересчета */
+    .is-pulsing {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(50, 115, 220, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(50, 115, 220, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(50, 115, 220, 0);
+        }
+    }
+
+    /* Стили для предупреждения о пересчете */
+    #recalculation-warning {
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Стили для строк с изменениями */
+    .edit-mode tr:has(.has-changes) {
+        background-color: #fff8f0 !important;
+    }
+
+    /* Стили для индикатора в заголовке таблицы */
+    .changes-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #ff9800;
+        border-radius: 50%;
+        margin-left: 5px;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+
+    /* Стили для предупреждающих сообщений */
+    .notification.is-warning.is-light {
+        background-color: #fffbeb;
+        border-left: 4px solid #f59e0b;
+    }
+
+    /* Стили для индикатора несохраненных изменений в заголовке */
+    .unsaved-changes-indicator {
+        display: none;
+        color: #f59e0b;
+        font-size: 0.875rem;
+        margin-left: 10px;
+    }
+
+    .has-unsaved-changes .unsaved-changes-indicator {
+        display: inline-block;
+    }
+    
     /* Стили для модального окна */
     .delete-confirm-modal-backdrop {
         position: fixed;
@@ -349,15 +447,6 @@
             font-size: 0.85rem;
         }
     }
-    
-    /* Контейнер для карточек - обеспечиваем видимость тултипов */
-    .columns.is-multiline {
-        overflow: visible;
-    }
-    
-    .columns.is-multiline .column {
-        overflow: visible;
-    }
 </style>
 {% endblock %}
 
@@ -390,7 +479,7 @@
 </div>
 
 <!-- Кнопки действий -->
-<div class="level mb-5">
+<div class="level mb-5" id="action-buttons-level">
     <div class="level-left">
         <div class="level-item">
             <a href="{{ url_for('workload.my_workloads') }}" class="button is-light">
@@ -399,6 +488,13 @@
                 </span>
                 <span>Назад к списку</span>
             </a>
+        </div>
+        <!-- Индикатор несохраненных изменений -->
+        <div class="level-item">
+            <span class="unsaved-changes-indicator">
+                <i class="fas fa-exclamation-triangle"></i>
+                Есть несохраненные изменения
+            </span>
         </div>
     </div>
     
@@ -413,21 +509,34 @@
             </button>
             
             <!-- Кнопки для режима редактирования -->
-            <button id="save-changes-button" class="button is-success mr-2" style="display: none;" onclick="saveChanges()">
+            <button id="save-changes-button" 
+                    class="button is-success mr-2" 
+                    style="display: none;" 
+                    onclick="saveChanges()"
+                    disabled
+                    title="Нет изменений для сохранения">
                 <span class="icon">
                     <i class="fas fa-save"></i>
                 </span>
                 <span>Сохранить изменения</span>
             </button>
             
-            <button id="recalculate-button" class="button is-info mr-2" style="display: none;" onclick="recalculate()">
+            <button id="recalculate-button" 
+                    class="button is-info mr-2" 
+                    style="display: none;" 
+                    onclick="recalculate()"
+                    title="Пересчитать данные с новыми параметрами">
                 <span class="icon">
                     <i class="fas fa-calculator"></i>
                 </span>
                 <span>Пересчитать</span>
             </button>
             
-            <button id="cancel-edit-button" class="button is-light mr-2" style="display: none;" onclick="cancelEdit()">
+            <button id="cancel-edit-button" 
+                    class="button is-light mr-2" 
+                    style="display: none;" 
+                    onclick="cancelEdit()"
+                    title="Отменить редактирование">
                 <span class="icon">
                     <i class="fas fa-times"></i>
                 </span>
@@ -574,7 +683,7 @@
                 <p class="heading">Коэффициент затратности</p>
                 <p id="cost-coefficient-value" class="title is-3 has-text-dark">
                     {{ workload_summary.cost_coefficient }}
-                    <span id="cost-coefficient-tooltip" class="tooltip-container ml-1" style="display: none;">
+                    <span id="cost-coefficient-tooltip" class="tooltip-container ml-1">
                         <span class="tooltip-icon">
                             <i class="fas fa-info"></i>
                         </span>
@@ -598,7 +707,7 @@
                     {{ workload_summary.total_zet_hours }}
                     <span class="tooltip-container ml-1">
                         <span class="tooltip-icon">
-                            <i class="fas fa-info"></i>
+                            <i class="fas {% if workload_summary.total_zet_hours == 60 %}fa-check{% else %}fa-exclamation{% endif %}"></i>
                         </span>
                         <span class="tooltip-content">
                             {% if workload_summary.total_zet_hours == 60 %}
@@ -764,6 +873,10 @@
     // Сохраненное состояние для отмены
     let originalData = {};
     
+    // Флаги для отслеживания изменений
+    let hasUnsavedChanges = false;
+    let hasUnrecalculatedChanges = false;
+    
     // Функция переключения режима редактирования
     function toggleEditMode() {
         isEditMode = !isEditMode;
@@ -786,6 +899,16 @@
             // Сохраняем исходные данные
             saveOriginalData();
             
+            // Сбрасываем флаги изменений
+            hasUnsavedChanges = false;
+            hasUnrecalculatedChanges = false;
+            
+            // Блокируем кнопку сохранения изначально
+            updateSaveButtonState();
+            
+            // Добавляем обработчики изменений ко всем инпутам
+            addChangeListeners();
+            
             // Обновляем колспан для итогов
             if (totalLabel) {
                 totalLabel.setAttribute('colspan', '11');
@@ -798,11 +921,24 @@
             recalculateButton.style.display = 'none';
             cancelButton.style.display = 'none';
             
+            // Удаляем обработчики изменений
+            removeChangeListeners();
+            
+            // Сбрасываем флаги
+            hasUnsavedChanges = false;
+            hasUnrecalculatedChanges = false;
+            
+            // Удаляем предупреждение о пересчете
+            removeRecalculationWarning();
+            
             // Обновляем колспан для итогов
             if (totalLabel) {
                 totalLabel.setAttribute('colspan', '11');
             }
         }
+        
+        // Обновляем индикатор несохраненных изменений
+        updateUnsavedChangesIndicator();
     }
     
     // Функция сохранения исходных данных
@@ -819,6 +955,11 @@
                 }
             }
         });
+        
+        // Сохраняем значения чекбоксов "Учитывать"
+        document.querySelectorAll('.consider-checkbox').forEach(checkbox => {
+            originalData[checkbox.name] = checkbox.checked;
+        });
     }
     
     // Функция восстановления исходных данных при отмене
@@ -831,14 +972,184 @@
                 } else {
                     element.value = originalData[name];
                 }
+                
+                // Удаляем визуальную индикацию изменения
+                element.classList.remove('has-changes');
             }
         });
     }
     
+    // Функция добавления обработчиков изменений
+    function addChangeListeners() {
+        // Обработчики для всех инпутов в режиме редактирования
+        document.querySelectorAll('.edit-mode-input').forEach(input => {
+            if (input.tagName === 'INPUT') {
+                if (input.type === 'checkbox') {
+                    input.addEventListener('change', onInputChange);
+                } else {
+                    input.addEventListener('input', onInputChange);
+                }
+            }
+        });
+        
+        // Обработчик для чекбоксов "Учитывать"
+        document.querySelectorAll('.consider-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', onInputChange);
+        });
+    }
+    
+    // Функция удаления обработчиков изменений
+    function removeChangeListeners() {
+        document.querySelectorAll('.edit-mode-input').forEach(input => {
+            if (input.tagName === 'INPUT') {
+                input.removeEventListener('change', onInputChange);
+                input.removeEventListener('input', onInputChange);
+            }
+        });
+        
+        document.querySelectorAll('.consider-checkbox').forEach(checkbox => {
+            checkbox.removeEventListener('change', onInputChange);
+        });
+    }
+    
+    // Обработчик изменений в инпутах
+    function onInputChange(event) {
+        const input = event.target;
+        const originalValue = originalData[input.name];
+        let currentValue;
+        
+        if (input.type === 'checkbox') {
+            currentValue = input.checked;
+        } else {
+            currentValue = input.value;
+        }
+        
+        // Проверяем, изменилось ли значение
+        const hasChanged = originalValue !== currentValue;
+        
+        if (hasChanged) {
+            hasUnsavedChanges = true;
+            hasUnrecalculatedChanges = true;
+            
+            // Добавляем визуальную индикацию изменения
+            input.classList.add('has-changes');
+            
+            // Показываем предупреждение о необходимости пересчета
+            showRecalculationWarning();
+        } else {
+            input.classList.remove('has-changes');
+        }
+        
+        // Проверяем, есть ли вообще изменения
+        checkForAnyChanges();
+        updateSaveButtonState();
+        updateUnsavedChangesIndicator();
+    }
+    
+    // Функция проверки наличия любых изменений
+    function checkForAnyChanges() {
+        hasUnsavedChanges = false;
+        hasUnrecalculatedChanges = false;
+        
+        document.querySelectorAll('.edit-mode-input, .consider-checkbox').forEach(input => {
+            const originalValue = originalData[input.name];
+            let currentValue;
+            
+            if (input.type === 'checkbox') {
+                currentValue = input.checked;
+            } else {
+                currentValue = input.value;
+            }
+            
+            if (originalValue !== currentValue) {
+                hasUnsavedChanges = true;
+                hasUnrecalculatedChanges = true;
+            }
+        });
+    }
+    
+    // Функция обновления состояния кнопки сохранения
+    function updateSaveButtonState() {
+        const saveButton = document.getElementById('save-changes-button');
+        const recalculateButton = document.getElementById('recalculate-button');
+        
+        if (!saveButton) return;
+        
+        if (!hasUnsavedChanges) {
+            // Нет изменений - кнопка заблокирована
+            saveButton.disabled = true;
+            saveButton.title = 'Нет изменений для сохранения';
+            saveButton.classList.add('is-static');
+            recalculateButton.classList.remove('is-pulsing');
+        } else if (hasUnrecalculatedChanges) {
+            // Есть непересчитанные изменения - кнопка заблокирована
+            saveButton.disabled = true;
+            saveButton.title = 'Сначала пересчитайте данные';
+            saveButton.classList.add('is-static');
+            recalculateButton.classList.add('is-pulsing'); // Добавим анимацию для привлечения внимания
+        } else {
+            // Изменения есть и пересчитаны - кнопка доступна
+            saveButton.disabled = false;
+            saveButton.title = 'Сохранить изменения';
+            saveButton.classList.remove('is-static');
+            recalculateButton.classList.remove('is-pulsing');
+        }
+    }
+    
+    // Функция показа предупреждения о необходимости пересчета
+    function showRecalculationWarning() {
+        // Удаляем предыдущее предупреждение, если оно есть
+        const existingWarning = document.getElementById('recalculation-warning');
+        if (existingWarning) {
+            return; // Предупреждение уже показано
+        }
+        
+        // Создаем новое предупреждение
+        const warning = document.createElement('div');
+        warning.id = 'recalculation-warning';
+        warning.className = 'notification is-warning is-light mb-3';
+        warning.innerHTML = `
+            <button class="delete" onclick="this.parentElement.remove()"></button>
+            <strong>Внимание!</strong> Вы изменили данные в полях ввода. 
+            Для корректного сохранения необходимо пересчитать данные, нажав кнопку "Пересчитать".
+        `;
+        
+        // Вставляем предупреждение перед таблицей
+        const tableBox = document.querySelector('.box.shadow');
+        if (tableBox) {
+            tableBox.parentNode.insertBefore(warning, tableBox);
+        }
+    }
+    
+    // Функция удаления предупреждения о пересчете
+    function removeRecalculationWarning() {
+        const warning = document.getElementById('recalculation-warning');
+        if (warning) {
+            warning.remove();
+        }
+    }
+    
+    // Функция обновления индикатора несохраненных изменений
+    function updateUnsavedChangesIndicator() {
+        const level = document.getElementById('action-buttons-level');
+        if (hasUnsavedChanges && isEditMode) {
+            level.classList.add('has-unsaved-changes');
+        } else {
+            level.classList.remove('has-unsaved-changes');
+        }
+    }
+    
     // Функция отмены редактирования
     function cancelEdit() {
-        restoreOriginalData();
-        toggleEditMode();
+        if (hasUnsavedChanges) {
+            if (confirm('У вас есть несохраненные изменения. Вы уверены, что хотите отменить редактирование?')) {
+                restoreOriginalData();
+                removeRecalculationWarning();
+                toggleEditMode();
+            }
+        } else {
+            toggleEditMode();
+        }
     }
     
     // Функция обновления поля комментария при изменении чекбокса
@@ -858,6 +1169,11 @@
             }
             commentField.removeAttribute('readonly');
             row.classList.remove('has-background-grey-lighter');
+        }
+        
+        // Если мы в режиме редактирования, вызываем обработчик изменений
+        if (isEditMode) {
+            onInputChange({ target: checkbox });
         }
     }
     
@@ -912,6 +1228,18 @@
                         if (result.success && result.calculated_data) {
                             updateTableWithNewData(result.calculated_data);
                             showNotification('Пересчет выполнен успешно', 'is-success');
+                            
+                            // Сбрасываем флаг непересчитанных изменений
+                            hasUnrecalculatedChanges = false;
+                            removeRecalculationWarning();
+                            
+                            // Удаляем визуальные индикаторы изменений
+                            document.querySelectorAll('.has-changes').forEach(input => {
+                                input.classList.remove('has-changes');
+                            });
+                            
+                            // Обновляем состояние кнопки сохранения
+                            updateSaveButtonState();
                         } else {
                             showNotification('Ошибка при обновлении данных', 'is-danger');
                         }
@@ -1051,6 +1379,16 @@
     
     // Функция сохранения изменений
     function saveChanges() {
+        if (!hasUnsavedChanges) {
+            showNotification('Нет изменений для сохранения', 'is-warning');
+            return;
+        }
+        
+        if (hasUnrecalculatedChanges) {
+            showNotification('Сначала пересчитайте данные, а затем сохраните', 'is-warning');
+            return;
+        }
+        
         const formData = new FormData();
         formData.append('workload_id', {{ workload.id }});
         
@@ -1065,6 +1403,11 @@
             }
         });
         
+        // Собираем чекбоксы "Учитывать"
+        document.querySelectorAll('.consider-checkbox').forEach(checkbox => {
+            formData.append(checkbox.name, checkbox.checked ? 'on' : 'off');
+        });
+        
         // Отправляем на сервер
         fetch(`/workload/update/{{ workload.id }}`, {
             method: 'POST',
@@ -1074,6 +1417,10 @@
         .then(data => {
             if (data.success) {
                 showNotification('Изменения успешно сохранены', 'is-success');
+                
+                // Сбрасываем флаги изменений
+                hasUnsavedChanges = false;
+                hasUnrecalculatedChanges = false;
                 
                 // Выходим из режима редактирования
                 toggleEditMode();
@@ -1312,6 +1659,32 @@
                 }, 500);
             }, 3000);
         }
+        
+        // Предупреждение при попытке покинуть страницу с несохраненными изменениями
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges && isEditMode) {
+                e.preventDefault();
+                e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
+                return e.returnValue;
+            }
+        });
+        
+        // Обработчик для клавиши Escape - отмена редактирования
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isEditMode) {
+                cancelEdit();
+            }
+        });
+        
+        // Обработчик для Ctrl+S - сохранение изменений
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's' && isEditMode) {
+                e.preventDefault();
+                if (!hasUnrecalculatedChanges && hasUnsavedChanges) {
+                    saveChanges();
+                }
+            }
+        });
     });
 </script>
 {% endblock %}

@@ -428,7 +428,12 @@ def export_excel_current():
 
 
 def export_to_excel(calculated_data, workload_summary, program_info, contingent):
-    """Функция экспорта данных в Excel"""
+    """Функция экспорта данных в Excel - версия без перезаписи значений"""
+    
+    # Отладочная информация для проверки значений
+    print(f"DEBUG: total_workload = {workload_summary.get('total_workload', 0)}")
+    print(f"DEBUG: total_zet_hours = {workload_summary.get('total_zet_hours', 0)}")
+    
     # Определение столбцов для экспорта
     columns_to_include = [
         'Индекс дисциплины', 'Дисциплина', 'Название кафедры', 'Вид работы', 'Курс',
@@ -463,39 +468,53 @@ def export_to_excel(calculated_data, workload_summary, program_info, contingent)
     # Преобразование столбца 'Нагрузка' в числовой формат
     df['Нагрузка'] = pd.to_numeric(df['Нагрузка'], errors='coerce')
     
-    # Формирование summary_items
+    # Получаем минимальное значение коэффициента из настроек
+    settings = Settings.get_all_settings()
+    min_coefficient = float(settings.get('КоэффициентЗатратности', 15))
+    
+    # Формирование summary_items с КОММЕНТАРИЯМИ
     summary_items = []
     
     # Нормы и расчетные показатели
     summary_items.extend([
-        ("Норма времени на одну штатную единицу", workload_summary.get('norm_hours_per_position', 900)),
-        ("Коэффициент затратности (соотношение Контингент/ППС)", workload_summary.get('cost_coefficient', 0)),
-        ("Расчетное количество ставок", workload_summary.get('calculated_positions', 0)),
-        ("Контингент", contingent),
-        ("Сумма нагрузки", workload_summary.get('total_workload', 0))
+        ("Норма времени на одну штатную единицу", workload_summary.get('norm_hours_per_position', 900), ""),
+        ("Коэффициент затратности (соотношение Контингент/ППС)", 
+         workload_summary.get('cost_coefficient', 0),
+         f"Соответствует норме (>= {min_coefficient})" if workload_summary.get('cost_coefficient', 0) >= min_coefficient 
+         else f"Не соответствует норме (должно быть >= {min_coefficient})"),
+        ("Расчетное количество ставок", workload_summary.get('calculated_positions', 0), ""),
+        ("Контингент", contingent, ""),
+        ("Сумма нагрузки", workload_summary.get('total_workload', 0), ""),
+        ("Трудоемкость (часов ЗЕТ)", 
+         workload_summary.get('total_zet_hours', 0),
+         "Соответствует норме (60 часов)" if workload_summary.get('total_zet_hours', 0) == 60 
+         else "Должно быть 60 часов")
     ])
     
-    # Добавляем трудоемкость ЗЕТ
-    if 'total_zet_hours' in workload_summary:
-        summary_items.append(("Трудоемкость (часов ЗЕТ)", workload_summary['total_zet_hours']))
-    
-    # Создание DataFrame для summary
-    summary_df = pd.DataFrame(summary_items, columns=["Название", "Значение"])
+    # Создание DataFrame для summary с тремя колонками
+    summary_df = pd.DataFrame(summary_items, columns=["Название", "Значение", "Комментарий"])
     
     # Формирование program_info_items
     program_info_items = [
-        ("Учебный год", program_info.get('academic_year', '')),
-        ("Год набора", program_info.get('admission_year', '')),
-        ("Специальность", program_info.get('specialty', '')),
-        ("Профиль", program_info.get('profile', '')),
-        ("Квалификация", program_info.get('qualification', '')),
-        ("Форма обучения", program_info.get('education_form', ''))
+        ("Учебный год", program_info.get('academic_year', ''), ""),
+        ("Год набора", program_info.get('admission_year', ''), ""),
+        ("Специальность", program_info.get('specialty', ''), ""),
+        ("Профиль", program_info.get('profile', ''), ""),
+        ("Квалификация", program_info.get('qualification', ''), ""),
+        ("Форма обучения", program_info.get('education_form', ''), "")
     ]
     
-    program_info_df = pd.DataFrame(program_info_items, columns=["Название", "Значение"])
+    program_info_df = pd.DataFrame(program_info_items, columns=["Название", "Значение", "Комментарий"])
     
     # Объединение program_info и summary
     combined_info_df = pd.concat([program_info_df, summary_df], ignore_index=True)
+    
+    # Отладочная информация для проверки содержимого combined_info_df
+    print("=== ОТЛАДКА EXCEL ===")
+    print("Содержимое combined_info_df:")
+    for idx, row in combined_info_df.iterrows():
+        print(f"  Строка {idx}: '{row['Название']}' = {row['Значение']} | Комментарий: '{row['Комментарий']}'")
+    print("=== КОНЕЦ ОТЛАДКИ EXCEL ===")
     
     # Создание объекта BytesIO для сохранения Excel-файла в памяти
     output = BytesIO()
@@ -545,41 +564,45 @@ def export_to_excel(calculated_data, workload_summary, program_info, contingent)
         # Добавление автозаполнения фильтра
         worksheet.autofilter(data_start_row, 0, data_start_row + len(df), len(df.columns) - 1)
         
-        # Условное форматирование для коэффициента затратности
-        if 'Коэффициент затратности' in combined_info_df['Название'].values:
-            coef_row = combined_info_df[combined_info_df['Название'].str.contains('Коэффициент затратности')].index[0]
-            coef_cell = f'B{coef_row + 1}'
-            coef_value = float(workload_summary.get('cost_coefficient', 0))
-            
-            # Получаем минимальное значение коэффициента из настроек
-            settings = Settings.get_all_settings()
-            min_coefficient = float(settings.get('КоэффициентЗатратности', 15))
-            
-            if coef_value >= min_coefficient:
-                cell_format = workbook.add_format({'bg_color': '#c6efce', 'font_color': '#004600'})
-                message = f"Соответствует норме (>= {min_coefficient})"
-            else:
-                cell_format = workbook.add_format({'bg_color': '#ffc7ce', 'font_color': '#9c0006'})
-                message = f"Не соответствует норме (должно быть >= {min_coefficient})"
-            
-            worksheet.write(coef_cell, coef_value, cell_format)
-            worksheet.write(f'C{coef_row + 1}', message)
+        # УСЛОВНОЕ ФОРМАТИРОВАНИЕ ТОЛЬКО ДЛЯ СТОЛБЦОВ B И C
         
-        # Условное форматирование для трудоемкости ЗЕТ
-        if 'Трудоемкость (часов ЗЕТ)' in combined_info_df['Название'].values:
-            zet_row = combined_info_df[combined_info_df['Название'] == 'Трудоемкость (часов ЗЕТ)'].index[0]
-            zet_cell = f'B{zet_row + 1}'
-            zet_value = float(workload_summary.get('total_zet_hours', 0))
+        # Форматы для успешных и неуспешных значений
+        success_format = workbook.add_format({'bg_color': '#c6efce', 'font_color': '#004600'})
+        error_format = workbook.add_format({'bg_color': '#ffc7ce', 'font_color': '#9c0006'})
+        
+        # Находим и форматируем коэффициент затратности
+        for idx, row in combined_info_df.iterrows():
+            excel_row = idx + 2  # +1 для Excel базы, +1 для заголовка
             
-            if zet_value == 60:
-                cell_format = workbook.add_format({'bg_color': '#c6efce', 'font_color': '#004600'})
-                message = "Соответствует норме"
-            else:
-                cell_format = workbook.add_format({'bg_color': '#ffc7ce', 'font_color': '#9c0006'})
-                message = "Должно быть 60"
+            if 'Коэффициент затратности' in row['Название']:
+                print(f"Найден коэффициент затратности в строке {idx}, Excel строка {excel_row}")
+                coef_value = float(row['Значение'])
+                if coef_value >= min_coefficient:
+                    # Форматируем только ячейки B и C
+                    worksheet.write(f'B{excel_row}', coef_value, success_format)
+                    worksheet.write(f'C{excel_row}', row['Комментарий'], success_format)
+                else:
+                    # Форматируем только ячейки B и C
+                    worksheet.write(f'B{excel_row}', coef_value, error_format)
+                    worksheet.write(f'C{excel_row}', row['Комментарий'], error_format)
+                break
+        
+        # Находим и форматируем трудоемкость ЗЕТ
+        for idx, row in combined_info_df.iterrows():
+            excel_row = idx + 2  # +1 для Excel базы, +1 для заголовка
             
-            worksheet.write(zet_cell, zet_value, cell_format)
-            worksheet.write(f'C{zet_row + 1}', message)
+            if row['Название'] == 'Трудоемкость (часов ЗЕТ)':
+                print(f"Найдена трудоемкость ЗЕТ в строке {idx}, Excel строка {excel_row}")
+                zet_value = float(row['Значение'])
+                if zet_value == 60:
+                    # Форматируем только ячейки B и C
+                    worksheet.write(f'B{excel_row}', zet_value, success_format)
+                    worksheet.write(f'C{excel_row}', row['Комментарий'], success_format)
+                else:
+                    # Форматируем только ячейки B и C
+                    worksheet.write(f'B{excel_row}', zet_value, error_format)
+                    worksheet.write(f'C{excel_row}', row['Комментарий'], error_format)
+                break
     
     # Перемотка файла в начало
     output.seek(0)

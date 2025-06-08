@@ -4,10 +4,12 @@ import hashlib
 def get_connection():
     return pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=localhost,1433;'
-        'DATABASE=ДеканатКалькулятор;'
-        'UID=pavelchen;'
-        'PWD=523604;'
+        'SERVER=127.0.0.1,1433;'
+        'DATABASE=Деканат1;'
+        'UID=sa;'
+        'PWD=646758523604DVFU@;'
+        'TrustServerCertificate=yes;'
+        'Connection Timeout=30;'
     )
 
 def execute_query(query, params=None, fetch_one=False, fetch_all=False):

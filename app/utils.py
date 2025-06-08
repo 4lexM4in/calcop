@@ -38,3 +38,4 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False):
     finally:
         cursor.close()
         conn.close()
+        

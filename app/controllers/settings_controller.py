@@ -124,3 +124,4 @@ def update_settings_api():
         return jsonify({"success": True, "results": results})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    

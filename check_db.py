@@ -29,3 +29,4 @@ def check_db_connection():
 
 if __name__ == "__main__":
     check_db_connection()
+    

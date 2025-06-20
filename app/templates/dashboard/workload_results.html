@@ -5,261 +5,8 @@
 {% block section_title %}Результаты расчета нагрузки{% endblock %}
 
 {% block head %}
-<style>
-    /* Стили для боксов и карточек */
-    .shadow {
-        box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
-        transition: box-shadow 0.3s ease;
-    }
-    
-    .shadow:hover {
-        box-shadow: 0 0.5em 1.5em -0.125em rgba(10, 10, 10, 0.15), 0 0 0 1px rgba(10, 10, 10, 0.05);
-    }
-    
-    /* Стили для блока сведений о программе */
-    .program-detail {
-        padding: 0.6rem 0.8rem;
-        background-color: #f5f5f5;
-        border-radius: 4px;
-        border: 1px solid #efefef;
-        font-weight: 400;
-        color: #363636;
-        min-height: 2.5rem;
-        display: flex;
-        align-items: center;
-    }
-    
-    /* Выравнивание меток и значений */
-    .field .label {
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        color: #666;
-    }
-    
-    /* Одинаковая высота для всех полей */
-    .field {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .field .control {
-        flex-grow: 1;
-        display: flex;
-    }
-    
-    .field .program-detail {
-        width: 100%;
-    }
-    
-    /* Стили для карточек итогов */
-    .card {
-        height: 100%;
-        border-radius: 6px;
-        overflow: visible;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5em 2em -0.125em rgba(10, 10, 10, 0.2), 0 0 0 1px rgba(10, 10, 10, 0.05);
-    }
-    
-    .card .heading {
-        color: #7a7a7a;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        margin-bottom: 0.75rem;
-    }
-    
-    .card .title {
-        margin-bottom: 0.25rem;
-        transition: color 0.3s ease;
-    }
-    
-    .card .subtitle {
-        opacity: 0.8;
-        margin-top: 0.5rem !important;
-    }
-    
-    .card-content {
-        overflow: visible;
-    }
-    
-    /* Стили для тултипов */
-    .tooltip-container {
-        position: relative;
-        display: inline-block;
-        margin-left: 5px;
-        cursor: help;
-        vertical-align: middle;
-    }
-    
-    .tooltip-icon {
-        background-color: #f14668;
-        color: white;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.8rem;
-        vertical-align: text-top;
-        transition: background-color 0.3s ease;
-    }
-    
-    /* Зеленый цвет для успешного состояния */
-    .has-text-success .tooltip-icon {
-        background-color: #48c774;
-    }
-    
-    .has-text-danger .tooltip-icon {
-        background-color: #f14668;
-    }
-    
-    .tooltip-content {
-        display: none;
-        width: 280px;
-        background-color: #363636;
-        color: #fff;
-        text-align: left;
-        border-radius: 6px;
-        padding: 10px 15px;
-        position: absolute;
-        z-index: 2000;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        pointer-events: none;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        white-space: normal;
-        overflow: visible;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    
-    /* Позиционируем тултип над элементом */
-    .tooltip-content {
-        bottom: 150%;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    /* Стрелка тултипа */
-    .tooltip-content::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #363636 transparent transparent transparent;
-    }
-    
-    /* Для тултипов в правых карточках - показываем слева */
-    .column:nth-last-child(-n+2) .tooltip-content {
-        left: auto;
-        right: 0;
-        transform: translateX(0);
-    }
-    
-    .column:nth-last-child(-n+2) .tooltip-content::after {
-        left: auto;
-        right: 20px;
-        margin-left: 0;
-        margin-right: -5px;
-    }
-    
-    /* Специальные стили для последней карточки (трудоемкость) */
-    .column:last-child .tooltip-content {
-        left: auto;
-        right: 0;
-        transform: translateX(10px);
-    }
-    
-    .tooltip-container:hover .tooltip-content {
-        display: block;
-        opacity: 1;
-    }
-    
-    /* Контейнер для карточек - обеспечиваем видимость тултипов */
-    .columns.is-multiline {
-        overflow: visible;
-    }
-    
-    .columns.is-multiline .column {
-        overflow: visible;
-    }
-    
-    /* Стили для таблицы */
-    #study-plan-table {
-        font-size: 0.9rem;
-        width: 100%;
-    }
-
-    #study-plan-table thead th {
-        position: sticky;
-        top: 0;
-        background-color: #f5f5f5;
-        z-index: 10;
-        white-space: nowrap;
-        vertical-align: middle;
-        text-align: center;
-        font-size: 0.85rem;
-        padding: 0.5rem;
-    }
-
-    #study-plan-table input.input.is-small {
-        height: 2rem;
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-    }
-
-    #study-plan-table td {
-        vertical-align: middle;
-        min-width: 80px;
-        font-size: 0.9rem;
-        padding: 0.5rem;
-    }
-    
-    /* Стили для кнопок */
-    .button.is-medium {
-        font-weight: 500;
-    }
-    
-    /* Мобильные стили */
-    @media screen and (max-width: 768px) {
-        .column.is-one-fifth {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-        
-        #study-plan-table {
-            font-size: 0.8rem;
-        }
-        
-        #study-plan-table td, 
-        #study-plan-table th {
-            padding: 0.25rem 0.5rem;
-        }
-        
-        #study-plan-table input.input.is-small {
-            height: 1.75rem;
-            font-size: 0.7rem;
-            padding: 0.1rem 0.3rem;
-        }
-        
-        .tooltip-content {
-            width: 220px;
-            font-size: 0.85rem;
-        }
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 {% endblock %}
 
 {% block dashboard_content %}
@@ -552,6 +299,14 @@
                 </button>
             </div>
             <div class="control">
+                <button type="button" id="export-current-excel" class="button is-success is-medium">
+                    <span class="icon">
+                        <i class="fas fa-file-excel"></i>
+                    </span>
+                    <span>Экспорт в Excel</span>
+                </button>
+            </div>
+            <div class="control">
                 <a href="{{ url_for('main.index') }}" class="button is-light is-medium">
                     <span class="icon">
                         <i class="fas fa-arrow-left"></i>
@@ -604,123 +359,43 @@
         </footer>
     </div>
 </div>
+
+<!-- Форма для экспорта текущего расчета -->
+<form id="export-current-form" action="{{ url_for('workload.export_excel_current') }}" method="POST" style="display: none;">
+    <!-- Скрытые поля будут добавлены динамически через JavaScript -->
+</form>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/workload-results.js') }}"></script>
 <script>
+    // Дополнительные функции для страницы результатов
     document.addEventListener('DOMContentLoaded', () => {
-        // Загрузка настроек и проверка коэффициента затратности
-        function loadSettingsAndCheckCoefficient() {
-            fetch('/settings/api/settings')
-                .then(response => {
-                    if (!response.ok) {
-                        return {};
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Loaded settings:', data);
-                    checkCostCoefficient(data);
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки настроек:', error);
-                    checkCostCoefficient({'КоэффициентЗатратности': 15});
-                });
-        }
-        
-        // Проверка коэффициента затратности
-        function checkCostCoefficient(settings) {
-            const currentCoefficient = parseFloat({{ workload_summary.cost_coefficient }});
-            const minCoefficient = parseFloat(settings.КоэффициентЗатратности || 15);
-            
-            const minCoefficientElement = document.getElementById('min-coefficient');
-            if (minCoefficientElement) {
-                minCoefficientElement.textContent = minCoefficient;
-            }
-            
-            const costCoefficientValue = document.getElementById('cost-coefficient-value');
-            const costCoefficientText = document.getElementById('cost-coefficient-text');
-            const tooltipIcon = document.querySelector('#cost-coefficient-tooltip .tooltip-icon i');
-            
-            if (currentCoefficient < minCoefficient) {
-                // Красный цвет для недостаточного коэффициента
-                if (costCoefficientValue) {
-                    costCoefficientValue.classList.remove('has-text-dark', 'has-text-success');
-                    costCoefficientValue.classList.add('has-text-danger');
+        // Обработчик для кнопки экспорта текущего расчета
+        const exportCurrentButton = document.getElementById('export-current-excel');
+        if (exportCurrentButton) {
+            exportCurrentButton.addEventListener('click', function() {
+                // Собираем все данные формы
+                const recalculationForm = document.getElementById('recalculation-form');
+                const exportForm = document.getElementById('export-current-form');
+                
+                // Очищаем форму экспорта
+                exportForm.innerHTML = '';
+                
+                // Копируем все поля из формы пересчета
+                const formData = new FormData(recalculationForm);
+                for (let [key, value] of formData.entries()) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value;
+                    exportForm.appendChild(input);
                 }
                 
-                if (costCoefficientText) {
-                    costCoefficientText.textContent = `Не соответствует норме (должно быть ≥ ${minCoefficient})`;
-                }
-                
-                if (tooltipIcon) {
-                    tooltipIcon.className = 'fas fa-exclamation';
-                }
-            } else {
-                // Зеленый цвет для нормального коэффициента
-                if (costCoefficientValue) {
-                    costCoefficientValue.classList.remove('has-text-dark', 'has-text-danger');
-                    costCoefficientValue.classList.add('has-text-success');
-                }
-                
-                if (costCoefficientText) {
-                    costCoefficientText.textContent = `Соответствует норме (≥ ${minCoefficient})`;
-                }
-                
-                if (tooltipIcon) {
-                    tooltipIcon.className = 'fas fa-check';
-                }
-            }
-        }
-        
-        // Загружаем настройки при загрузке страницы
-        loadSettingsAndCheckCoefficient();
-        
-        // Функция для обновления поля комментариев при изменении чекбокса
-        window.updateCommentsField = function(checkbox) {
-            const row = checkbox.closest('tr');
-            const commentField = row.querySelector('.comment-field');
-            
-            if (!checkbox.checked) {
-                commentField.value = "Не участвует в расчете нагрузки";
-                commentField.setAttribute('readonly', 'readonly');
-                row.classList.add('has-background-grey-lighter');
-            } else {
-                if (commentField.value === "Не участвует в расчете нагрузки") {
-                    commentField.value = "";
-                }
-                commentField.removeAttribute('readonly');
-                row.classList.remove('has-background-grey-lighter');
-            }
-        };
-        
-        // Обработчик для модального окна сохранения
-        const saveButton = document.getElementById('save-to-cabinet');
-        const saveModal = document.getElementById('save-workload-modal');
-        const closeModalButton = document.getElementById('close-save-modal');
-        const cancelSaveButton = document.getElementById('cancel-save');
-        
-        // Функция открытия модального окна
-        function openSaveModal() {
-            saveModal.classList.add('is-active');
-        }
-        
-        // Функция закрытия модального окна
-        function closeSaveModal() {
-            saveModal.classList.remove('is-active');
-        }
-        
-        // Назначаем обработчики событий
-        if (saveButton) {
-            saveButton.addEventListener('click', openSaveModal);
-        }
-        
-        if (closeModalButton) {
-            closeModalButton.addEventListener('click', closeSaveModal);
-        }
-        
-        if (cancelSaveButton) {
-            cancelSaveButton.addEventListener('click', closeSaveModal);
+                // Отправляем форму экспорта
+                exportForm.submit();
+            });
         }
     });
 </script>

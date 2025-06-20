@@ -4,6 +4,11 @@
 
 {% block section_title %}Настройки{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+{% endblock %}
+
 {% block dashboard_content %}
 <h2 class="title">Настройки системы</h2>
 
@@ -73,5 +78,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formulas.js') }}"></script>
 {% endblock %}

@@ -1,3 +1,5 @@
+/* Базовые стили и тултипы */
+
 /* Улучшенные стили для тултипов */
 .tooltip-container {
   position: relative;
@@ -16,6 +18,7 @@
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
+  transition: background-color 0.3s ease;
 }
 
 /* Меняем цвет иконки в зависимости от состояния */
@@ -138,7 +141,9 @@ th:nth-child(n+7) .tooltip-container .tooltip-content::after {
 
 .tooltip-icon {
   transition: background-color 0.3s ease;
-}/* Стили для страницы авторизации */
+}
+
+/* Стили для страницы авторизации */
 .shadow {
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
 }
@@ -223,33 +228,6 @@ th:nth-child(n+7) .tooltip-container .tooltip-content::after {
   overflow-y: visible;
 }
 
-/* Стили для таблицы учебного плана */
-#study-plan-table {
-  font-size: 0.9rem;
-  width: 100%;
-}
-
-#study-plan-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #f5f5f5;
-  z-index: 10;
-  white-space: nowrap;
-  vertical-align: middle;
-  text-align: center;
-}
-
-#study-plan-table input.input.is-small {
-  height: 2rem;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-}
-
-#study-plan-table td {
-  vertical-align: middle;
-  min-width: 80px; /* Минимальная ширина ячейки для улучшения читаемости */
-}
-
 /* Стили для специального чекбокса "Непосредственно с участием ППС" */
 .with-ppe-checkbox {
   margin-right: 0.5rem;
@@ -296,157 +274,9 @@ th:nth-child(n+7) .tooltip-container .tooltip-content::after {
     display: block;
   }
   
-  /* Уменьшаем размер шрифта в таблице */
-  #study-plan-table {
-    font-size: 0.8rem;
+  /* Уменьшаем размер тултипов на мобильных */
+  .tooltip-content {
+    width: 220px;
+    font-size: 0.85rem;
   }
-  
-  /* Уменьшаем отступы в ячейках */
-  #study-plan-table td, 
-  #study-plan-table th {
-    padding: 0.25rem 0.5rem;
-  }
-  
-  /* Уменьшаем размер полей ввода */
-  #study-plan-table input.input.is-small {
-    height: 1.75rem;
-    font-size: 0.7rem;
-    padding: 0.1rem 0.3rem;
-  }
-  
-  /* Уменьшаем минимальную ширину ячеек */
-  #study-plan-table td {
-    min-width: 60px;
-  }
-}
-
-/* Для совсем маленьких экранов */
-@media screen and (max-width: 480px) {
-  #study-plan-table {
-    font-size: 0.7rem;
-  }
-  
-  #study-plan-table td, 
-  #study-plan-table th {
-    padding: 0.2rem 0.3rem;
-  }
-  
-  #study-plan-table td {
-    min-width: 50px;
-  }
-}
-
-/* Улучшенные стили для тултипов */
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-  margin-left: 5px;
-  cursor: help;
-}
-
-.tooltip-icon {
-  background-color: #f14668;
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-}
-
-.tooltip-content {
-  display: none;
-  width: 280px;
-  background-color: #363636;
-  color: #fff;
-  text-align: left;
-  border-radius: 6px;
-  padding: 10px 15px;
-  position: absolute;
-  z-index: 2000; /* Увеличенный z-index для видимости поверх карточек */
-  opacity: 0;
-  transition: opacity 0.3s;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  pointer-events: none;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  overflow: visible;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Тень для лучшей видимости */
-}
-
-/* Позиционирование тултипа */
-.tooltip-content {
-  bottom: 150%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.tooltip-content::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #363636 transparent transparent transparent;
-}
-
-/* Особые стили для тултипов в заголовках таблицы */
-th .tooltip-container .tooltip-content {
-  bottom: auto;
-  top: 125%;
-  left: 0;
-  margin-left: 0;
-  transform: translateX(0);
-}
-
-th .tooltip-container .tooltip-content::after {
-  top: auto;
-  bottom: 100%;
-  left: 10%;
-  border-color: transparent transparent #363636 transparent;
-}
-
-/* Для тултипов в правой части таблицы */
-th:nth-child(n+7) .tooltip-container .tooltip-content {
-  left: auto;
-  right: 0;
-}
-
-th:nth-child(n+7) .tooltip-container .tooltip-content::after {
-  left: auto;
-  right: 10%;
-}
-
-/* Для тултипов в карточках в правых колонках */
-.column:nth-last-child(-n+2) .tooltip-content {
-  left: auto;
-  right: 0;
-  transform: translateX(0);
-}
-
-.column:nth-last-child(-n+2) .tooltip-content::after {
-  left: auto;
-  right: 20px;
-  margin-left: 0;
-  margin-right: -5px;
-}
-
-.tooltip-container:hover .tooltip-content {
-  display: block;
-  opacity: 1;
-}
-
-/* Обеспечиваем видимость тултипов в карточках */
-.card {
-  overflow: visible !important;
-}
-
-.card-content {
-  overflow: visible !important;
 }

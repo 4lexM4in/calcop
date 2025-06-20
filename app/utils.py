@@ -5,9 +5,9 @@ def get_connection():
     return pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
         'SERVER=127.0.0.1,1433;'
-        'DATABASE=Деканат1;'
-        'UID=sa;'
-        'PWD=646758523604DVFU@;'
+        'DATABASE=ДеканатКалькулятор;'
+        'UID=pavelchen;'
+        'PWD=523604;'
         'TrustServerCertificate=yes;'
         'Connection Timeout=30;'
     )

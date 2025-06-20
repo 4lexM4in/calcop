@@ -1,0 +1,70 @@
+/* Стили для настроек */
+
+/* Стили для кода */
+code {
+    background-color: #f5f5f5;
+    color: #ff3860;
+    font-size: 0.875em;
+    font-weight: normal;
+    padding: 0.25em 0.5em 0.25em;
+    word-break: break-all;
+}
+
+/* Стили для справки */
+.content ul {
+    margin-left: 1em;
+}
+
+.content li {
+    margin-bottom: 0.5em;
+}
+
+/* Стили для норм */
+.norms-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Стилизация для заблокированных полей */
+.input[disabled] {
+    background-color: #f5f5f5;
+    border-color: #dbdbdb;
+    color: #7a7a7a;
+    cursor: not-allowed;
+}
+
+/* Подсветка тега "Заблокировано" */
+.tag.is-warning {
+    font-size: 0.7rem;
+    height: 1.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+/* Выравнивание полей норм */
+.norm-field {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.norm-label {
+    min-height: 40px;
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Одинаковая высота для всех инпутов */
+.norm-input {
+    height: 2.25rem !important;
+}
+
+/* Стили для вкладок настроек */
+.tab-content {
+    border-radius: 0 0 6px 6px;
+}
+
+.tab-pane {
+    padding: 1.5rem;
+}

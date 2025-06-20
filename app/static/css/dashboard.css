@@ -1,0 +1,172 @@
+/* Общие стили для dashboard */
+
+/* Стили для боксов и карточек */
+.shadow {
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
+    transition: box-shadow 0.3s ease;
+}
+
+.shadow:hover {
+    box-shadow: 0 0.5em 1.5em -0.125em rgba(10, 10, 10, 0.15), 0 0 0 1px rgba(10, 10, 10, 0.05);
+}
+
+/* Стили для блока сведений о программе */
+.program-detail {
+    padding: 0.6rem 0.8rem;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #efefef;
+    font-weight: 400;
+    color: #363636;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Выравнивание меток и значений */
+.field .label {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Одинаковая высота для всех полей */
+.field {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.field .control {
+    flex-grow: 1;
+    display: flex;
+}
+
+.field .program-detail {
+    width: 100%;
+}
+
+/* Стили для карточек итогов */
+.card {
+    height: 100%;
+    border-radius: 6px;
+    overflow: visible;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5em 2em -0.125em rgba(10, 10, 10, 0.2), 0 0 0 1px rgba(10, 10, 10, 0.05);
+}
+
+.card .heading {
+    color: #7a7a7a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.card .title {
+    margin-bottom: 0.25rem;
+    transition: color 0.3s ease;
+}
+
+.card .subtitle {
+    opacity: 0.8;
+    margin-top: 0.5rem !important;
+}
+
+.card-content {
+    overflow: visible;
+}
+
+/* Стили для таблицы */
+#study-plan-table {
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+#study-plan-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f5f5f5;
+    z-index: 10;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+}
+
+#study-plan-table input.input.is-small {
+    height: 2rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+#study-plan-table td {
+    vertical-align: middle;
+    min-width: 80px;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+}
+
+/* Стили для кнопок */
+.button.is-medium {
+    font-weight: 500;
+}
+
+/* Стили для информации о расчете */
+.workload-info {
+    background-color: #f0f8ff;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.workload-info .level {
+    margin-bottom: 0.5rem;
+}
+
+.workload-info-label {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+.workload-info-value {
+    color: #3273dc;
+}
+
+.workload-comment {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: #4a4a4a;
+}
+
+/* Мобильные стили */
+@media screen and (max-width: 768px) {
+    .column.is-one-fifth {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    #study-plan-table {
+        font-size: 0.8rem;
+    }
+    
+    #study-plan-table td, 
+    #study-plan-table th {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    #study-plan-table input.input.is-small {
+        height: 1.75rem;
+        font-size: 0.7rem;
+        padding: 0.1rem 0.3rem;
+    }
+}
